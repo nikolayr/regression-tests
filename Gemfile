@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
 
 gem 'cucumber'
+gem 'bundle'
+gem 'capybara'
+gem 'selenium-webdriver'
 
-#gem uninstall phantomjs
+#gem 'poltergeist'
+#gem 'phantomjs'
+
