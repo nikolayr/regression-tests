@@ -3,7 +3,7 @@ Feature: Create Posts.
   make posts to my feed.
   # $(".ember-view.ember-text-area.edit-post-area")
  
-  Scenario: Create aritrary post tp default feed
+  Scenario: Create arbitrary post in default feed
     Given I am logged in as "User1"
     When I type in text "some arbitrary text" to edit box
       And press button "Post"
