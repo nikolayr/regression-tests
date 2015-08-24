@@ -1,4 +1,5 @@
 ##YAML Template
 ---
+default: --format json --out=features_report.json
 html: --format progress --format html --out=features_report.html  
 spd: --format json --out=features_report.json
