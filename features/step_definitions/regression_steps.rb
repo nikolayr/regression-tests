@@ -104,4 +104,9 @@ When /^press button "([^"]*)"$/ do |arg1|
   pending # express the regexp above with the code you wish you had
 end
 
+When /^I wait until all Ajax requests are complete$/ do
+#  wait_until do
+#    page.evaluate_script('$.active') == 0
+#  end
+end
 

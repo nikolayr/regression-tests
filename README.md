@@ -2,8 +2,14 @@
 Pepyatka regression tests
 
 
+## requirements
+ruby
+selenium-chromedriver
+chromedriver
+
+
 ## how to run test
-cucumber -p html_report
+cucumber -p html
 
 
 ## how to run tests with json output
