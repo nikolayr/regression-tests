@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/nikolayr/regression-tests.png?label=ready&title=Ready)](https://waffle.io/nikolayr/regression-tests)
 # regression-tests
 Pepyatka regression tests
 
