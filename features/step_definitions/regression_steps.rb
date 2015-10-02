@@ -20,8 +20,6 @@ Given /^I am on "([^"]*)" page$/ do |page_name|
   #check page transition
   #check that current session path is url_path
   #check that page has payload payload_check 
-
-
   
 end
 
