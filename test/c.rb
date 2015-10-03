@@ -13,7 +13,7 @@ end
 # :window_size => [800,600]
 
 session = Capybara::Session.new(:selenium)#:poltergeist
-session.visit "https://beta.freefeed.net/"
+session.visit "https://freefeed.net/"
 
 Wait.until!("login box with username is loaded") { session.has_content?("Username") }
 
