@@ -15,7 +15,8 @@ end
 session = Capybara::Session.new(:selenium)#:poltergeist
 session.visit "https://freefeed.net/"
 
-Wait.until!("login box with username is loaded") { session.has_content?("Username") }
+#Wait.until!("login box with username is loaded") { session.has_content?("Username") }
+Wait.until!("login box with username is loaded") { session.evaluate_script('$.active') }
 
 if session.has_content?("Username")
   puts "All shiny, captain!"

@@ -1,9 +1,24 @@
-P_SITE='http://micropeppa.freefeed.net/'
+require 'capybara'
+require 'capybara/poltergeist'
+require 'wait_until'
+
+P_SITE='https://freefeed.net'
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, {:inspector => true})
+#, :js_errors => false})
+end
+
+# :js_errors => false
+# :window_size => [800,600]
+
 
 Given /^I am on "([^"]*)" page$/ do |page_name|
 
   url_path = nil
   payload_check = nil
+
+  @session = Capybara::Session.new(:selenium)#:poltergeist
 
   case page_name
     when 'login'
@@ -16,6 +31,11 @@ Given /^I am on "([^"]*)" page$/ do |page_name|
   end
 
   #redirect to page - url_path
+  @session.visit(P_SITE + url_path)
+  Wait.until!("loading page:#{page_name} on ") { @session.evaluate_script('$.active') }
+
+  @project_folder = ENV["$WORKSPACE"] || "./"
+  @session.save_screenshot("")
 
   #check page transition
   #check that current session path is url_path
@@ -24,6 +44,7 @@ Given /^I am on "([^"]*)" page$/ do |page_name|
 end
 
 Given /^There is a user "([^"]*)" with password "([^"]*)"$/ do |username, user_password|
+
   pending # express the regexp above with the code you wish you had
 end
 
