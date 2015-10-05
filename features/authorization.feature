@@ -6,8 +6,7 @@ Feature: Authorization.
   Scenario: Log in to the site
     Given I am on "login" page
       And There is a user "_testuser" with password "ntcnbhjdfybt"
-    When I fill in "Username" with "_testuser"
-      And fill in "Password" with "ntcnbhjdfybt"
+    When I enter user credentials
       And press "Sign in"
     Then I should be on the homepage
       And I should see "sign out"
@@ -18,7 +17,6 @@ Feature: Authorization.
       And fill in "Password" with "notexists"
       And press "Sign in"
     Then I should be on "login error" page
-          #replace with regexp?
       And I should see "We could not find the nickname you provided."
       And I should see "Create an account »"
 
@@ -29,7 +27,6 @@ Feature: Authorization.
       And fill in "Password" with "unntcnbhjdfybt"
       And press "Sign in"
     Then I should be on "login error" page
-#replace with regexp?
       And I should see "The password you provided does not match the password in our system."
       And I should see "Create an account »"
 
