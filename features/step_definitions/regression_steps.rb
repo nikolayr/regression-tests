@@ -1,9 +1,24 @@
 require 'capybara'
 require 'capybara/poltergeist'
 require 'wait_until'
-
+require 'rspec/expectations'
 
 P_SITE='https://micropeppa.freefeed.net'
+
+
+# RSpec.configure do |config|
+#   config.expect_with :rspec do |c|
+#     # Disable the `expect` sytax...
+#     c.syntax = :should
+#
+#     # ...or disable the `should` syntax...
+#     c.syntax = :expect
+#
+#     # ...or explicitly enable both
+#     c.syntax = [:should, :expect]
+#   end
+# end
+
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {:inspector => true})
@@ -18,25 +33,26 @@ end
 
 Given /^I am on "([^"]*)" page$/ do |page_name|
 
-  url_path = nil
+  # reset saved user credentials
+  @current_user = nil
 
-  @session = Capybara::Session.new(:selenium)#:poltergeist
+  url_path = nil
 
   case page_name
     when 'login'
       url_path = '/session/signin'
     when 'homepage'
       url_path = '/'
+    when 'login error'
+      steps %Q{
+        Given }
   else
-    pending # pour some code 
+    raise ("add initial state:#{page_name}")
   end
 
   @session.visit(P_SITE + url_path)
 
-  Wait.until!("loading page:#{page_name} on ") { @session.evaluate_script('$.active') }
-
-  #check page transition
-  #check that current session path is url_path
+  Wait.until!("loading page:#{page_name} on ") { @session.evaluate_script('$.active') == 0 }
 
 end
 
@@ -46,8 +62,8 @@ Given /^There is a user "([^"]*)" with password "([^"]*)"$/ do |username, user_p
     when '_testuser'
       username = 'testuser'
   end
-  @usern = {:username=>username,:password=>user_password}
 
+  @current_user = {:username=>username,:password=>user_password}
 
 end
 
@@ -84,7 +100,7 @@ When /^press "([^"]*)"$/ do |arg1|
 end
 
 When(/^I enter user credentials$/) do
-  @usern.each do |u_key,u_val|
+  @current_user.each do |u_key,u_val|
     steps %Q{
     When I fill in "#{u_key}" with "#{u_val}"
     }
@@ -92,32 +108,27 @@ When(/^I enter user credentials$/) do
 end
 
 Then /^I should be on the homepage$/ do
-  steps %Q{
-    Then I should see "homepage"
-  }
 
-  @session.save_screenshot('screenshot1.png')
+
+  expect(@session.find("div.box-header-timeline")).to have_content("Home")
 
 end
 
+#DEPRECATION: Using `should` from rspec-expectations' old `:should` syntax without explicitly
+# enabling the syntax is deprecated. Use the new `:expect` syntax or
+# explicitly enable `:should` with `config.expect_with(:rspec) { |c| c.syntax = :should }` instead.
+# Called from /home/ruban/projects/regression-tests/features/step_definitions/regression_steps.rb:98:in
+# `block in <top (required)>'.
+
 Then /^I should see "([^"]*)"$/ do |arg1|
+
   case arg1
+    when 'sign out'
+      expect(@session.find("div.logged-user")).to have_link("sign out")
     when 'homepage'
-      home_str = @session.evaluate_script("$('.box-header-timeline').text()")
-      home_str.match(/.*Home*/)
-      #fail if $&.nil?
-
-      raise("Meow Home not found")
-      # wait for ajax t ocomplete
-
-      puts "meow:",@session.evaluate_script('$(".logged-user").find("div").find("a")[2].innerHTML')
-
-      #
-      # == sign out
-
+      expect(@session.find("div.box-header-timeline")).to have_content("Home")
     else
-      puts "add visibility check form"
-      return false
+      raise("expected to see:#{arg1}" )
   end
 
 end
@@ -125,10 +136,14 @@ end
 Then /^I should be on "([^"]*)" page$/ do |page_title|
 
   case page_title
-    when "homepage"
-      'sign out' == @session.evaluate_script('$(".logged-user").find("div").find("a")[2].innerHTML')
+    when 'login error'
+
+    when 'homepage'
+      unless 'sign out' == @session.evaluate_script('$(".logged-user").find("div").find("a")[2].innerHTML')
+        raise "can't see 'sign out' link"
+      end
   else
-    false
+    raise("unknown place #{page_title}")
   end
 
 end
@@ -141,40 +156,62 @@ end
 
  Given /^I am logged in as "([^"]*)"$/ do |name|
 
-   user_name = 'testuser'
-   user_password='ntcnbhjdfybt'
+   case name
+     when 'testuser'
+       steps %Q{ Given There is a user "testuser" with password "ntcnbhjdfybt}
+   end
 
    steps %Q{
-         Given I'm logged in as #{user_name} with password
+    When I enter user credentials
+      And press "Sign in"
+    Then I should be on the homepage
    }
- # Look ma, no quotes!
- # Easier to do "extract steps from plain text" refactorings with cut and paste!
-#  steps %Q{
-#    Given the user #{name} exists
-#    Given I log in as #{name}
-#  }
 
 end
 
 When /^I type in text "([^"]*)" to edit box$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+
+  @session.within('div.p-create-post-view') do
+    fill_in('textarea', :with => arg1)
+  end
+#  $("div.p-create-post-view").find("textarea")
+#  @session.fill_in('', :with => arg1)
 end
 
 Then /^I should see new post with text "([^"]*)" in my feed$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+
+  Wait.until!("adding post to feed") { @session.evaluate_script('$.active') }
+
+  last_post_text = @session.evaluate_script("$('div.posts').\
+find('div.ember-view').\
+find('.post-body.p-timeline-post').\
+find('div.body').\
+find('div.text')[0].innerHTML")
+
+  if arg1 == last_post_text.strip
+
+  else
+    raise("can't find new post with text:#{arg1}")
+  end
+
+
 end
 
 Then /^I should see empty edit box$/ do
-  pending # express the regexp above with the code you wish you had
+
+  unless "" == page.evaluate_script('$("div.p-create-post-view").find("textarea")[0].value')
+    raise("edit bos is not empty")
+  end
+
 end
 
 When /^press button "([^"]*)"$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+  @session.click_link_or_button(arg1)
 end
 
 When /^I wait until all Ajax requests are complete$/ do
 
-  #Wait.until!("wait ajax req completed") { @session.evaluate_script('$.active') }
+  Wait.until!("wait ajax req completed") { @session.evaluate_script('$.active') }
 
 #  wait_until do
 #    page.evaluate_script('$.active') == 0

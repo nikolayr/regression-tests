@@ -8,6 +8,7 @@ gem 'capybara'
 gem 'selenium-webdriver'
 gem 'poltergeist'
 gem 'wait_until'
+gem 'rspec-expectations'
 
 #gem 'phantomjs' - loaded through apt-get install
 
