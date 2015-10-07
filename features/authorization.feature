@@ -27,14 +27,14 @@ Feature: Authorization.
       And fill in "Password" with "unntcnbhjdfybt"
       And press "Sign in"
     Then I should be on "login error" page
-      And I should see "The password you provided does not match the password in our system."
+      And I should see "We could not find the nickname you provided."
       And I should see "Create an account »"
 
   Scenario: Empty password field
     Given I am on "login" page
     When I fill in "Username" with "_testuser"
       And press "Sign in"
-    Then I should be on the homepage
+    Then I should see "Please enter password"
           #on Friendfeed no error is displayed. on pepyatka:
     # And I should see "Error: user undefined doesn't exist"
           #Error: Please enter password

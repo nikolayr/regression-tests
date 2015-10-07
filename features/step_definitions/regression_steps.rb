@@ -128,7 +128,8 @@ Then /^I should see "([^"]*)"$/ do |arg1|
     when 'homepage'
       expect(@session.find("div.box-header-timeline")).to have_content("Home")
     else
-      raise("expected to see:#{arg1}" )
+      #raise("expected to see:#{arg1}" )
+      expect(@session).to have_text(arg1)
   end
 
 end

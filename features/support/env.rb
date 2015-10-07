@@ -26,7 +26,7 @@ After do |scenario|
 
   Cucumber.wants_to_quit = true if scenario.failed?
   #reset state of capybara session
-  @session.cleanup!
+  #@session.cleanup!
 end
 
 AfterStep do |scenario|
