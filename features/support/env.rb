@@ -12,12 +12,13 @@ Capybara.register_driver :remote_firefox do |app|
                                        :desired_capabilities => capabilities)
 end
 
-   Capybara.server_port = 3010
-   ip = "127.0.0.1"
-   Capybara.app_host = "http://#{ip}:#{Capybara.server_port}"
-   Capybara.current_driver = :remote_browser
-   Capybara.javascript_driver = :remote_browser
+# app host is the base of app being tested, without you cant use visit('/login')
+#   Capybara.server_port = 3010
+#   ip = "127.0.0.1"
+#   Capybara.app_host = "http://#{ip}:#{Capybara.server_port}"
 
+Capybara.current_driver = :remote_browser
+Capybara.javascript_driver = :remote_browser
 
 # this will add @scenario_name to all scenarios
 Before do |scenario|
