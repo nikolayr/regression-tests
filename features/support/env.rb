@@ -2,16 +2,17 @@
 #require 'cucumber/core/ast/scenario'
 #require 'cucumber/core/ast/scenario_outline'
 require 'capybara'
+require 'selenium-webdriver'
 
-  require 'selenium-webdriver'
-    url = 'http://127.0.0.1:4444/wd/hub'
-   capabilities = Selenium::WebDriver::Remote::Capabilities.internet_explorer
-    Capybara.register_driver :remote_browser do |app|
-     Capybara::Selenium::Driver.new(app,
-                                    :browser => :remote, :url => url,
-                                    :desired_capabilities => capabilities)
-   end
-    Capybara.server_port = 3010
+Capybara.register_driver :remote_firefox do |app|
+
+   url = 'http://127.0.0.1:4444/wd/hub'
+   capabilities = Selenium::WebDriver::Remote::Capabilities.firefox
+   Capybara::Selenium::Driver.new(app, :browser => :remote, :url => url,
+                                       :desired_capabilities => capabilities)
+end
+
+   Capybara.server_port = 3010
    ip = "127.0.0.1"
    Capybara.app_host = "http://#{ip}:#{Capybara.server_port}"
    Capybara.current_driver = :remote_browser
@@ -21,7 +22,7 @@ require 'capybara'
 # this will add @scenario_name to all scenarios
 Before do |scenario|
 
-    @session = Capybara::Session.new(:selenium)#:poltergeist
+    @session = Capybara::Session.new(:remote_firefox)
     @scenario_name = scenario.name
 
     # case scenario

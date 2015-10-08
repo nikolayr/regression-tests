@@ -1,32 +1,15 @@
 require 'capybara'
-require 'capybara/poltergeist'
 require 'wait_until'
 require 'rspec/expectations'
 
 P_SITE='https://micropeppa.freefeed.net'
 
 
-# RSpec.configure do |config|
-#   config.expect_with :rspec do |c|
-#     # Disable the `expect` sytax...
-#     c.syntax = :should
-#
-#     # ...or disable the `should` syntax...
-#     c.syntax = :expect
-#
-#     # ...or explicitly enable both
-#     c.syntax = [:should, :expect]
-#   end
-# end
+#Capybara.register_driver :poltergeist do |app|
+#  Capybara::Poltergeist::Driver.new(app, {:inspector => true})
+##, :js_errors => false})
+#end
 
-
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, {:inspector => true})
-#, :js_errors => false})
-end
-
-# :js_errors => false
-# :window_size => [800,600]
 
 #http://www.rubydoc.info/github/jnicklas/capybara/master/Capybara/Session
 
